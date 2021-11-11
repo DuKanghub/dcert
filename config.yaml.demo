@@ -1,0 +1,5 @@
+Email: yourEmail
+SavePath: dir_to_save_sources
+CADirURL: https://acme-v02.api.letsencrypt.org/directory
+AliAccessKeyId: yourAccessKeyId
+AliAccessKeySecret: yourAccessKeySecret
