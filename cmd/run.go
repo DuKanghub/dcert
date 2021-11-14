@@ -54,8 +54,8 @@ func GetSSLCerts(challenge string, domains []string) {
 			SecretKey:          AliAccessKeySecret,
 			TTL:                600,
 			HTTPTimeout:        200 * time.Second,
-			PollingInterval:    2 * time.Second,
-			PropagationTimeout: 120 * time.Second,
+			PollingInterval:    2 * time.Second,	//每2秒查一下txt记录
+			PropagationTimeout: 120 * time.Second,	//检查120s
 		}
 		dnsProvider, err := alidns.NewDNSProviderConfig(dnsConfig)
 		if err != nil {
