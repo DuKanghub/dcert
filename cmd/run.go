@@ -13,6 +13,7 @@ import (
 	"strings"
 	"time"
 )
+
 const rootPathWarningMessage = `!!!! HEADS UP !!!!
 
 Your account credentials have been saved in your Let's Encrypt
@@ -49,10 +50,12 @@ func GetSSLCerts(challenge string, domains []string) {
 			log.Fatal("使用dns验证需要传入 AliAccessKeyId 和 AliAccessKeySecret ")
 		}
 		dnsConfig := &alidns.Config{
-			APIKey: AliAccessKeyId,
-			SecretKey: AliAccessKeySecret,
-			TTL: 600,
-			HTTPTimeout: 60* time.Second,
+			APIKey:             AliAccessKeyId,
+			SecretKey:          AliAccessKeySecret,
+			TTL:                600,
+			HTTPTimeout:        200 * time.Second,
+			PollingInterval:    2 * time.Second,
+			PropagationTimeout: 120 * time.Second,
 		}
 		dnsProvider, err := alidns.NewDNSProviderConfig(dnsConfig)
 		if err != nil {
@@ -91,10 +94,10 @@ func obtainCertificate(domains []string, client *lego.Client) (*certificate.Reso
 	if len(domains) > 0 {
 		// obtain a certificate, generating a new private key
 		request := certificate.ObtainRequest{
-			Domains:                        domains,
-			Bundle:                         false,
+			Domains: domains,
+			Bundle:  false,
 		}
 		return client.Certificate.Obtain(request)
 	}
-	return nil,errors.New("请传入1个域名")
+	return nil, errors.New("请传入1个域名")
 }
