@@ -2,7 +2,9 @@ package cmd
 
 import (
 	"bytes"
+	"crypto/x509"
 	"encoding/json"
+	"github.com/go-acme/lego/v4/certcrypto"
 	"github.com/go-acme/lego/v4/certificate"
 	"golang.org/x/net/idna"
 	"log"
@@ -94,4 +96,22 @@ func sanitizedDomain(domain string) string {
 		log.Fatal(err)
 	}
 	return safe
+}
+
+func (s *CertificatesStorage) ReadCertificate(domain, extension string) ([]*x509.Certificate, error) {
+	content, err := s.ReadFile(domain, extension)
+	if err != nil {
+		return nil, err
+	}
+
+	// The input may be a bundle or a single certificate.
+	return certcrypto.ParsePEMBundle(content)
+}
+func (s *CertificatesStorage) ReadFile(domain, extension string) ([]byte, error) {
+	return os.ReadFile(s.GetFileName(domain, extension))
+}
+
+func (s *CertificatesStorage) GetFileName(domain, extension string) string {
+	filename := sanitizedDomain(domain) + extension
+	return filepath.Join(s.rootPath, filename)
 }
